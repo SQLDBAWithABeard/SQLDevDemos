@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "dab-adventureworks-lt",
+			"path": "../ClonedForked/dab-adventureworks-lt"
+		},
+		{
+			"name": "dab-azure-sql-quickstart",
+			"path": "../ClonedForked/dab-azure-sql-quickstart"
+		}
+	],
+	"settings": {}
+}
