@@ -10,6 +10,10 @@
 		{
 			"name": "dab-azure-sql-quickstart",
 			"path": "../ClonedForked/dab-azure-sql-quickstart"
+		},
+		{
+			"name": "dab-swa-todo",
+			"path": "../ClonedForked/dab-swa-todo"
 		}
 	],
 	"settings": {}
