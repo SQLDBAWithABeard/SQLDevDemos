@@ -1,114 +1,127 @@
 targetScope = 'subscription'
 
+// The main bicep module to provision Azure resources.
+// For a more complete walkthrough to understand how this file works with azd,
+// see https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/make-azd-compatible?pivots=azd-create
+
 @minLength(1)
 @maxLength(64)
-@description('Name of the environment that can be used as part of naming resource convention.')
+@description('Name of the the environment which is used to generate a short unique hash used in all resources.')
 param environmentName string
 
 @minLength(1)
-@description('Primary location for all resources.')
+@description('Primary location for all resources')
 param location string
 
-// Optional parameters
-param userAssignedIdentityName string = ''
-param sqlServerName string = ''
-param functionPlanName string = ''
-param functionStorName string = ''
-param functionAppName string = ''
-param staticWebAppName string = ''
+@description('Id of the user or app to assign application roles')
+param principalId string = ''
 
-// *ServiceName is used as value for the tag (azd-service-name) azd uses to identify deployment host
-param webServiceName string = 'web'
-param apiServiceName string = 'api'
+@secure()
+@description('SQL Server administrator password')
+param sqlAdminPassword string
 
-var abbreviations = loadJsonContent('abbreviations.json')
-var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+@secure()
+@description('Application user password')
+param appUserPassword string
+
+// Optional parameters to override the default azd resource naming conventions.
+// Add the following to main.parameters.json to provide values:
+// "resourceGroupName": {
+//      "value": "myGroupName"
+// }
+param resourceGroupName string = ''
+
+var abbrs = loadJsonContent('./abbreviations.json')
+
+// tags that should be applied to all resources.
 var tags = {
+  // Tag all resources with the environment name.
   'azd-env-name': environmentName
-  repo: 'https://github.com/azure-samples/dab-azure-sql-quickstart'
 }
 
-// Define resource group
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
-  name: environmentName
+// Generate a unique token to be used in naming resources.
+// Remove linter suppression after using.
+#disable-next-line no-unused-vars
+var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+
+// Name of the service defined in azure.yaml
+var webServiceName = 'web'
+
+// Organize resources in a resource group
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
   location: location
   tags: tags
 }
 
-module identity 'app/identity.bicep' = {
-  name: 'identity'
-  scope: resourceGroup
+// Add resources to be provisioned below.
+// A full example that leverages azd bicep modules can be seen in the todo-python-mongo template:
+// https://github.com/Azure-Samples/todo-python-mongo/tree/main/infra
+
+// Provision resources to support the web app
+module web './app/web.bicep' = {
+  name: '${deployment().name}-app'
+  scope: rg
   params: {
-    identityName: !empty(userAssignedIdentityName)
-      ? userAssignedIdentityName
-      : '${abbreviations.userAssignedIdentity}-${resourceToken}'
     location: location
     tags: tags
+    webServiceName: webServiceName
+    logAnalyticsName: '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    applicationInsightsName: '${abbrs.insightsComponents}${resourceToken}'
+    applicationInsightsDashboardName: '${abbrs.portalDashboards}${resourceToken}'
+    appServicePlanName: '${abbrs.webServerFarms}${resourceToken}'
+    appServiceName: '${abbrs.webSitesAppService}${resourceToken}'
+    keyVaultName: keyVault.outputs.name
   }
 }
 
-module storage 'app/storage.bicep' = {
-  name: 'storage'
-  scope: resourceGroup
+// Provision key vault
+module keyVault './core/security/keyvault.bicep' = {
+  name: 'keyvault'
+  scope: rg
   params: {
-    storName: !empty(functionStorName) ? functionStorName : '${abbreviations.storageAccounts}${resourceToken}'
+    name: '${abbrs.keyVaultVaults}${resourceToken}'
     location: location
     tags: tags
-    managedIdentityClientId: identity.outputs.clientId
+    principalId: principalId
   }
 }
 
-module web 'app/web.bicep' = {
-  name: 'web'
-  scope: resourceGroup
-  params: {
-    appName: !empty(staticWebAppName) ? staticWebAppName : '${abbreviations.staticWebApps}-${resourceToken}'
-    location: location
-    tags: tags
-    serviceTag: webServiceName
-    userAssignedManagedIdentity: {
-      name: identity.outputs.name
-      resourceId: identity.outputs.resourceId
-      clientId: identity.outputs.clientId
-    }
-    functionAppName: api.outputs.name
-  }
-}
-
-module api 'app/api.bicep' = {
-  name: 'api'
-  scope: resourceGroup
-  params: {
-    planName: !empty(functionPlanName) ? functionPlanName : '${abbreviations.appServicePlans}-${resourceToken}'
-    funcName: !empty(functionAppName) ? functionAppName : '${abbreviations.functionApps}-${resourceToken}'
-    location: location
-    tags: tags
-    serviceTag: apiServiceName
-    storageAccountName: storage.outputs.name
-    userAssignedManagedIdentity: {
-      resourceId: identity.outputs.resourceId
-      clientId: identity.outputs.clientId
-    }
-  }
-}
-
-module database 'app/database.bicep' = {
+// Create an Azure SQL Server instance and database and add key vault secrets
+module database './core/database/sqlserver/sqlserver.bicep' = {
   name: 'database'
-  scope: resourceGroup
+  scope: rg
   params: {
-    serverName: !empty(sqlServerName) ? sqlServerName : '${abbreviations.sqlServers}-${resourceToken}'
-    databaseName: 'adventureworkslt'
+    name: '${abbrs.sqlServers}${resourceToken}'
     location: location
     tags: tags
-    databaseAdministrator: {
-      name: identity.outputs.name
-      clientId: identity.outputs.clientId
-      tenantId: identity.outputs.tenantId
-    }
+    databaseName: '${resourceToken}-sql-database'
+    keyVaultName: keyVault.outputs.name
+    connectionStringKey: 'ConnectionStrings--DefaultConnection'
+    sqlAdminPassword: sqlAdminPassword
+    appUserPassword: appUserPassword
   }
 }
 
-// Application outputs
-output AZURE_STATIC_WEB_APP_ENDPOINT string = web.outputs.endpoint
-output AZURE_FUNCTION_API_ENDPOINT string = api.outputs.endpoint
-output AZURE_SQL_SERVER_ENDPOINT string = database.outputs.serverEndpoint
+// Create an access policy for the web service to access the key vault secrets
+module webKeyVaultAccess './core/security/keyvault-access.bicep' = {
+  name: 'web-keyvault-access'
+  scope: rg
+  params: {
+    keyVaultName: keyVault.outputs.name
+    principalId: web.outputs.SERVICE_WEB_IDENTITY_PRINCIPAL_ID
+  }
+}
+
+// Add outputs from the deployment here, if needed.
+//
+// This allows the outputs to be referenced by other bicep deployments in the deployment pipeline,
+// or by the local machine as a way to reference created resources in Azure for local development.
+// Secrets should not be added here.
+//
+// Outputs are automatically saved in the local azd environment .env file.
+// To see these outputs, run `azd env get-values`,  or `azd env get-values --output json` for json output.
+output AZURE_LOCATION string = location
+output AZURE_TENANT_ID string = tenant().tenantId
+output AZURE_KEY_VAULT_NAME string = keyVault.outputs.name
+output SERVICE_WEB_URI string = web.outputs.SERVICE_WEB_URI

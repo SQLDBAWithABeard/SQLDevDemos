@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azd", "azd", "{38A68913-F5C2-475D-980B-0E4FFBCB8CDB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{19612317-372A-4ECE-B155-36D07D3A6628}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "azd\src\Web\Web.csproj", "{4748B42C-AF5E-450D-AFCC-EB964C3C14BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4748B42C-AF5E-450D-AFCC-EB964C3C14BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4748B42C-AF5E-450D-AFCC-EB964C3C14BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4748B42C-AF5E-450D-AFCC-EB964C3C14BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4748B42C-AF5E-450D-AFCC-EB964C3C14BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{19612317-372A-4ECE-B155-36D07D3A6628} = {38A68913-F5C2-475D-980B-0E4FFBCB8CDB}
+		{4748B42C-AF5E-450D-AFCC-EB964C3C14BF} = {19612317-372A-4ECE-B155-36D07D3A6628}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {514F5BFC-52D6-4CDD-BCB6-BAA8960E901A}
+	EndGlobalSection
+EndGlobal

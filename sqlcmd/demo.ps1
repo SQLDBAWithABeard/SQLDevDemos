@@ -12,8 +12,10 @@
 #
 # PS1="${GREEN}Beard${RESET}> "
 
+# sudo apt install software-properties-common
 #curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
 
+#sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/prod.list)"
 #
 
 # curl -o /etc/yum.repos.d/packages-microsoft-com-prod.repo https://packages.microsoft.com/config/fedora/32/prod.repo
