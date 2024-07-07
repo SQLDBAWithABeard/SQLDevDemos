@@ -6,21 +6,33 @@
 # winget install sqlcmd -y
 
 #Ubuntu
+# Set up the prompt in bash
+<#
+GREEN="\[$(tput setaf 2)\]"
+RESET="\[$(tput sgr0)\]"
+PS1="${GREEN}Beard${RESET}> "
+#>
 
-# GREEN="\[$(tput setaf 2)\]"
-# RESET="\[$(tput sgr0)\]"
-#
-# PS1="${GREEN}Beard${RESET}> "
 
-# sudo apt install software-properties-common
-#curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+# In the Dev Container
 
-#sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/prod.list)"
-#
+<#
+sudo apt update
+
+# so that we can add the add-repo command
+sudo apt install software-properties-common
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/prod.list)"
+
+sudo apt install sqlcmd
+
+#>
+
 
 # curl -o /etc/yum.repos.d/packages-microsoft-com-prod.repo https://packages.microsoft.com/config/fedora/32/prod.repo
-
 # yum install sqlcmd
+
+docker pull mcr.microsoft.com/mssql/server:latest
 
 
 sqlcmd --version
@@ -33,7 +45,13 @@ sqlcmd --help
 
 sqlcmd create mssql --accept-eula --cached --using https://aka.ms/AdventureWorksLT.bak
 
-# Want to see the passwords ?
+sqlcmd query "SELECT DB_NAME() as [Current Database]"
+sqlcmd query "SELECT SCHEMA_NAME(t.schema_id) AS schema_name, t.name AS table_name
+FROM sys.tables t" --database AdventureWorksLT
+
+# Change the port protocol to HTTP and the visibility to private to autoforward with a 127.0.0.1
+
+# Want to see the passwords and connect in Azure Data Studio?
 sqlcmd config view --raw
 
 
