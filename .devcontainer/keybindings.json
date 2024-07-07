@@ -1,0 +1,8 @@
+// Place your key bindings in this file to override the defaults
+[
+    // RUn selected text in terminal even in bash :-)
+    {
+        "key": "F8",
+        "command": "workbench.action.terminal.runSelectedText"
+    }
+]
