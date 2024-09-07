@@ -2,19 +2,9 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"name": "dab-adventureworks-lt",
-			"path": "../ClonedForked/dab-adventureworks-lt"
-		},
-		{
-			"name": "dab-azure-sql-quickstart",
-			"path": "../ClonedForked/dab-azure-sql-quickstart"
-		},
-		{
-			"name": "dab-swa-todo",
-			"path": "../ClonedForked/dab-swa-todo"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"powershell.cwd": "SQLDevDemos"
+	}
 }

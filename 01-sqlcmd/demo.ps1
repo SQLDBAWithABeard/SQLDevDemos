@@ -1,4 +1,6 @@
-# sqlcmd demo
+# sqlcmd demo -
+
+RUN IN CODESPACES ROB
 
 # how to install go-sqlcmd
 
@@ -66,8 +68,7 @@ sqlcmd --help
 sqlcmd create mssql --accept-eula --cached --using https://aka.ms/AdventureWorksLT.bak
 
 sqlcmd query "SELECT DB_NAME() as [Current Database]"
-sqlcmd query "SELECT SCHEMA_NAME(t.schema_id) AS schema_name, t.name AS table_name
-FROM sys.tables t" --database AdventureWorksLT
+sqlcmd query "SELECT SCHEMA_NAME(t.schema_id) AS schema_name, t.name AS table_name FROM sys.tables t" --database AdventureWorksLT
 
 # Change the port protocol to HTTP and the visibility to private to autoforward with a 127.0.0.1
 

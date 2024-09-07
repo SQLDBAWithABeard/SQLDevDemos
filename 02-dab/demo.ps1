@@ -1,4 +1,7 @@
-cd ../dab
+# RUN IN CODESPACES ROB
+
+cd ../02-dab
+cd 02-dab/
 
 dotnet tool install --global Microsoft.DataApiBuilder
 
@@ -21,10 +24,10 @@ cd dab
 
 # lets create the data api builder
 
-dab init --database-type "mssql" --host-mode "Development" --connection-string "Server=localhost,15444;User Id=dab;Database=AdventureWorksLT;Password=PASSword01!;TrustServerCertificate=True;Encrypt=True;"
+dab init --database-type "mssql" --host-mode "Development" --connection-string 'Server=127.0.0.1;User Id=dab;Database=AdventureWorksLT;Password="PASSword01!";TrustServerCertificate=True;Encrypt=True;'
 
 # look at the new config file
-code /workspaces/SQLDevDemos/dab/dab-config.json
+code /workspaces/SQLDevDemos/02-dab/dab-config.json
 
 # Now we can start the data api builder :-)
 
@@ -48,7 +51,7 @@ http://127.0.0.1:8080/api/Product/ProductID/757
 
 # lets use Davide's magic T-SQL script of awesome!
 
-code /workspaces/SQLDevDemos/dab/sql-to-dab-config.sql
+code /workspaces/SQLDevDemos/02-dab/sql-to-dab-config.sql
 
 # add the results to the correct place in the config file and restart dab
 
