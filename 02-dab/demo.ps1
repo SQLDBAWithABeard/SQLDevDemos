@@ -24,7 +24,7 @@ cd dab
 
 # lets create the data api builder
 
-dab init --database-type "mssql" --host-mode "Development" --connection-string 'Server=127.0.0.1;User Id=dab;Database=AdventureWorksLT;Password="PASSword01!";TrustServerCertificate=True;Encrypt=True;'
+dab init --database-type "mssql" --host-mode "Development" --connection-string 'Server=127.0.0.1;User Id=dab;Database=AdventureWorksLT;Password="PASSword01";TrustServerCertificate=True;Encrypt=True;'
 
 # look at the new config file
 code /workspaces/SQLDevDemos/02-dab/dab-config.json
@@ -65,3 +65,5 @@ http://127.0.0.1:8080/swagger
 
 http://localhost:5000/graphql
 http://127.0.0.1:8080/graphql
+
+Invoke-RestMethod -Uri "http://127.0.0.1:8080/api/Product/ProductID/757" -Method Get
