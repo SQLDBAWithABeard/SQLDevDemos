@@ -20,6 +20,8 @@ alias cls="clear"
 # In WSL you can do this to get the latest version of sqlcmd for ARM64 into the container
 # docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
 
+cp /workspaces/SQLDevDemos/01-sqlcmd/sqlcmd /usr/local/share/nvm/current/bin/
+
 # docker pull mcr.microsoft.com/mssql/server:latest
 
 sqlcmd --version
@@ -98,9 +100,11 @@ wget -qO-  https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcm
 
 curl -o /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2 https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcmd-linux-arm64.tar.bz2
 
-tar -xvjf /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2
+curl -o /usr/local/share/nvm/current/bin/sqlcmd-linux-amd64.tar.bz2 https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcmd-linux-amd64.tar.bz2
 
-tar -jxf /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2 --directory /path/to/directory
+tar -xvjf /usr/local/share/nvm/current/bin/sqlcmd-linux-amd64.tar.bz2
+
+tar -jxf /usr/local/share/nvm/current/bin/sqlcmd-linux-amd64.tar.bz2 --directory /path/to/directory
 
 
 docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
