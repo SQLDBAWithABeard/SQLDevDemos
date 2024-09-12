@@ -17,10 +17,11 @@ alias cls="clear"
 
 #>
 
-# In WSL you can do this to get the latest version of sqlcmd for ARM64 into the container
-# docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
+# In WSL you can do this to get the latest version of sqlcmd for ARM64 or AMD64 into the container
+# cp /workspaces/SQLDevDemos/01-sqlcmd/AMD64/sqlcmd /usr/local/share/nvm/current/bin/sqlcmd
+# cp /workspaces/SQLDevDemos/01-sqlcmd/ARM64/sqlcmd /usr/local/share/nvm/current/bin/sqlcmd
 
-cp /workspaces/SQLDevDemos/01-sqlcmd/sqlcmd /usr/local/share/nvm/current/bin/
+# chmod 777 /usr/local/share/nvm/current/bin/sqlcmd
 
 # docker pull mcr.microsoft.com/mssql/server:latest
 
@@ -37,7 +38,7 @@ sqlcmd create mssql --accept-eula --cached --using https://aka.ms/AdventureWorks
 sqlcmd query "SELECT DB_NAME() as [Current Database]"
 sqlcmd query "SELECT SCHEMA_NAME(t.schema_id) AS schema_name, t.name AS table_name FROM sys.tables t" --database AdventureWorksLT
 
-sqlcmd query "CREATE LOGIN dab WITH PASSWORD='PASSword01'; CREATE USER dab FOR LOGIN dab; ALTER ROLE db_owner ADD MEMBER dab;"
+sqlcmd query "CREATE LOGIN dab WITH PASSWORD='PASSword01'; CREATE USER dab FOR LOGIN dab; ALTER ROLE db_owner ADD MEMBER dab;"  --database AdventureWorksLT
 
 
 
@@ -108,6 +109,10 @@ tar -jxf /usr/local/share/nvm/current/bin/sqlcmd-linux-amd64.tar.bz2 --directory
 
 
 docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
+cp /workspaces/SQLDevDemos/01-sqlcmd/AMD64/sqlcmd /usr/local/share/nvm/current/bin/sqlcmd
+cp /workspaces/SQLDevDemos/01-sqlcmd/ARM64/sqlcmd /usr/local/share/nvm/current/bin/sqlcmd
+
+chmod 777 /usr/local/share/nvm/current/bin/sqlcmd
 
 
 curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc

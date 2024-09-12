@@ -3,6 +3,10 @@
 cd ../02-dab
 cd 02-dab/
 
+if(Test-Path /workspaces/SQLDevDemos/02-dab/dab-config.json){
+    Remove-Item /workspaces/SQLDevDemos/02-dab/dab-config.json -Force
+}
+
 dotnet tool install --global Microsoft.DataApiBuilder
 
 dab --version
@@ -12,7 +16,7 @@ dab --version
 <#
 sqlcmd
 
-CREATE LOGIN dab WITH PASSWORD='PASSword01!'
+CREATE LOGIN dab WITH PASSWORD='PASSword01'
 GO
 CREATE USER dab FOR LOGIN dab
 GO
@@ -20,7 +24,6 @@ ALTER ROLE db_owner ADD MEMBER dab
 GO
 #>
 
-cd dab
 
 # lets create the data api builder
 
