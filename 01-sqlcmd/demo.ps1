@@ -17,45 +17,10 @@ alias cls="clear"
 
 #>
 
+# In WSL you can do this to get the latest version of sqlcmd for ARM64 into the container
+# docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
 
-# In the Dev Container
-
-<#
-sudo apt update
-
-# so that we can add the add-repo command
-sudo apt install software-properties-common -y
-
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-
-sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/debian/11/prod.list)" -y
-
-
-sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/22.04/prod.list)"
-
-sudo apt install sqlcmd
-
-wget -qO- your_link_here | tar xvz -C
-wget -qO-  https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcmd-linux-arm64.tar.bz2 | sudo tar -jxf /usr/local/share/nvm/current/bin/sqlcmd
-
-curl -o /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2 https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcmd-linux-arm64.tar.bz2
-
-tar -xvjf /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2
-
-tar -jxf /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2 --directory /path/to/directory
-
-
-docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
-#>
-
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-
-
-# curl -o /etc/yum.repos.d/packages-microsoft-com-prod.repo https://packages.microsoft.com/config/fedora/32/prod.repo
-# yum install sqlcmd
-
-docker pull mcr.microsoft.com/mssql/server:latest
-
+# docker pull mcr.microsoft.com/mssql/server:latest
 
 sqlcmd --version
 
@@ -69,6 +34,17 @@ sqlcmd create mssql --accept-eula --cached --using https://aka.ms/AdventureWorks
 
 sqlcmd query "SELECT DB_NAME() as [Current Database]"
 sqlcmd query "SELECT SCHEMA_NAME(t.schema_id) AS schema_name, t.name AS table_name FROM sys.tables t" --database AdventureWorksLT
+
+sqlcmd query "CREATE LOGIN dab WITH PASSWORD='PASSword01'; CREATE USER dab FOR LOGIN dab; ALTER ROLE db_owner ADD MEMBER dab;"
+
+
+
+
+
+
+
+
+
 
 # Change the port protocol to HTTP and the visibility to private to autoforward with a 127.0.0.1
 
@@ -100,6 +76,43 @@ sqlcmd config view --raw
 
 
 
+<#
+
+# In the Dev Container
+sudo apt update
+
+# so that we can add the add-repo command
+sudo apt install software-properties-common -y
+
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/debian/11/prod.list)" -y
+
+
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/22.04/prod.list)"
+
+sudo apt install sqlcmd
+
+wget -qO- your_link_here | tar xvz -C
+wget -qO-  https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcmd-linux-arm64.tar.bz2 | sudo tar -jxf /usr/local/share/nvm/current/bin/sqlcmd
+
+curl -o /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2 https://github.com/microsoft/go-sqlcmd/releases/download/v1.8.0/sqlcmd-linux-arm64.tar.bz2
+
+tar -xvjf /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2
+
+tar -jxf /usr/local/share/nvm/current/bin/sqlcmd-linux-arm64.tar.bz2 --directory /path/to/directory
+
+
+docker cp /mnt/s/sqlcmd-linux-arm64/sqlcmd 6696ef911fe1:/usr/local/share/nvm/current/bin/
+
+
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+
+
+# curl -o /etc/yum.repos.d/packages-microsoft-com-prod.repo https://packages.microsoft.com/config/fedora/32/prod.repo
+# yum install sqlcmd
+
+#>
 
 
 <#
